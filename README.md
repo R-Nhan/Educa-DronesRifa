@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema Rifa
 
-## Getting Started
+Sistema web para gerenciamento de rifas, criado para facilitar a organização, venda e acompanhamento dos números disponíveis, reservados e vendidos.
 
-First, run the development server:
+## Sobre o projeto
+
+O objetivo do Sistema Rifa é permitir que o administrador controle os números de uma rifa de forma simples. A ideia é ter uma tela com todos os números da rifa e ir alterando o status de cada número aos poucos, conforme as vendas forem acontecendo.
+
+Com isso, fica mais fácil saber:
+
+- Quais números ainda estão disponíveis
+- Quais números já foram vendidos
+- Quem comprou cada número
+- Quanto já foi arrecadado
+- Quantos números ainda faltam vender
+
+## Funcionalidades previstas
+
+- Listagem dos números da rifa
+- Marcação de números como disponíveis, reservados ou vendidos
+- Cadastro do nome do comprador
+- Controle do valor de cada número
+- Acompanhamento do total arrecadado
+- Visualização rápida dos números restantes
+- Organização da rifa em uma interface simples e responsiva
+
+## Tecnologias
+
+Este projeto está sendo desenvolvido com:
+
+- Next.js
+- React
+- TypeScript
+- CSS
+- Tailwind CSS
+
+## Como rodar o projeto
+
+Primeiro, instale as dependências:
+
+```bash
+npm install
+```
+
+Depois, rode o servidor de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra o navegador em:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts disponíveis
 
-## Learn More
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Inicia o projeto em modo de desenvolvimento.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Gera a versão de produção do projeto.
 
-## Deploy on Vercel
+```bash
+npm run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Inicia a versão de produção após o build.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+```
+
+Executa a verificação de lint do projeto.
+
+## Estrutura inicial
+
+```text
+app/
+  layout.tsx
+  page.tsx
+  globals.css
+  home.css
+
+components/
+  header/
+    index.tsx
+    header.css
+
+public/
+  imagens/
+```
+
+## Status do projeto
+
+O projeto está em fase inicial de desenvolvimento. A base com Next.js já foi criada e as próximas etapas serão construir a tela principal da rifa, a listagem dos números e os controles para atualizar o status de cada número.
+
+## Próximos passos
+
+- Criar o layout principal da página da rifa
+- Criar os cards ou botões dos números
+- Adicionar estados para disponível, reservado e vendido
+- Criar formulário para registrar comprador
+- Salvar os dados da rifa
+- Melhorar o visual para uso em celular e desktop
