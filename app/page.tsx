@@ -1,6 +1,8 @@
 import "./home.css"
 export default function Home() {
   return (
-      <h1>ola mundo</h1>
+      <div className="numero">
+          <h1>1</h1>
+      </div>
   );
 }

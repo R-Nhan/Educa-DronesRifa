@@ -9,7 +9,7 @@ datasource db {
 
 model Vendedor {
   id          Int @id @default(autoincrement())
-  nome        String
+  nome        String @unique
   totalVendas Int @default(0)
 
   rifas       RifaNumero[]
