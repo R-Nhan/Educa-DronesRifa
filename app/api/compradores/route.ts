@@ -196,22 +196,35 @@ export async function POST(request: Request) {
     );
   }
 
+  const rifasExistentes = await prisma.rifaNumero.findMany({
+    where: {
+      numero: { in: numeros },
+    },
+    select: { numero: true },
+  });
+  const numerosExistentes = new Set(rifasExistentes.map((rifa) => rifa.numero));
+  const numerosInexistentes = numeros.filter(
+    (numero) => !numerosExistentes.has(numero)
+  );
+
+  if (numerosInexistentes.length > 0) {
+    return NextResponse.json(
+      {
+        message:
+          numerosInexistentes.length === 1
+            ? `O numero ${numerosInexistentes[0]} nao existe na rifa.`
+            : `Os numeros ${numerosInexistentes.join(", ")} nao existem na rifa.`,
+      },
+      { status: 404 }
+    );
+  }
+
   const dataVenda = new Date();
   const rifas = await prisma.$transaction(
     numeros.map((numero) =>
-      prisma.rifaNumero.upsert({
+      prisma.rifaNumero.update({
         where: { numero },
-        create: {
-          numero,
-          vendido: true,
-          comprador,
-          cpfComprador,
-          telefoneComprador,
-          cidadeComprador,
-          vendedorId,
-          dataVenda,
-        },
-        update: {
+        data: {
           vendido: true,
           comprador,
           cpfComprador,

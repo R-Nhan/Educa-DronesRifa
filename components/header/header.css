@@ -4,9 +4,23 @@
   box-sizing:border-box;
   height:100px;
   display:flex;
-  justify-content:flex-end; /* joga para a direita */
+  justify-content:space-between;
   align-items:center;
-  padding-right:30px;
+  padding:0 30px;
+}
+
+.header-link-venda{
+  background:#F3E7C5;
+  color:#143A6B;
+  border-radius:6px;
+  padding:12px 18px;
+  text-decoration:none;
+  font-size:1rem;
+  font-weight:700;
+}
+
+.header-link-venda:hover{
+  background:#fffaf0;
 }
 
 .brand{
@@ -20,6 +34,11 @@
   width:auto;
 }
 
+.brand-logo-link{
+  display:flex;
+  align-items:center;
+}
+
 .brand h1{
   color:#F3E7C5;
   font-family:'Segoe UI', sans-serif;
@@ -30,4 +49,21 @@
 
 .brand h1 span{
   font-weight:700;
+}
+
+@media (max-width:620px){
+  .header{
+    height:auto;
+    min-height:100px;
+    gap:14px;
+    padding:16px;
+  }
+
+  .brand h1{
+    font-size:1.5rem;
+  }
+
+  .brand img{
+    height:54px;
+  }
 }
