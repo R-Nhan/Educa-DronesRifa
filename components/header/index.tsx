@@ -14,7 +14,7 @@ export function Header() {
         </h1>
 
         <Link className="brand-logo-link" href="/">
-          <img src="imagens/logo.png" alt="Educa Drones" />
+          <img src="/imagens/Logo.png" alt="Educa Drones" />
         </Link>
       </div>
     </header>

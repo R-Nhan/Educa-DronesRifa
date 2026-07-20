@@ -1,22 +1,44 @@
 .ranking-page {
   min-height: calc(100vh - 100px);
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
   box-sizing: border-box;
   padding: 40px 16px;
   color: #143a6b;
 }
 
-.ranking-card {
+.ranking-card,
+.export-card {
   width: min(100%, 760px);
   box-sizing: border-box;
-  background: #fffaf0;
-  border: 1px solid rgba(20, 58, 107, 0.16);
   border-radius: 8px;
   box-shadow: 0 18px 42px rgba(20, 58, 107, 0.12);
   padding: 28px;
+}
+
+.ranking-card {
+  background: #fffaf0;
+  border: 1px solid rgba(20, 58, 107, 0.16);
   text-align: center;
+}
+
+.export-card {
+  background: #ffffff;
+  border: 1px solid rgba(20, 58, 107, 0.14);
+}
+
+.export-card h2 {
+  margin: 0 0 10px;
+  color: #143a6b;
+  font-size: 1.5rem;
+}
+
+.export-card p {
+  margin: 0 0 16px;
+  color: #4d6178;
 }
 
 .ranking-card h2 {
