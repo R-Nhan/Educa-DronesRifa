@@ -17,51 +17,56 @@ function getCountId(count: unknown) {
 }
 
 async function getTopVendedores() {
-  const [vendedores, vendas] = await prisma.$transaction([
-    prisma.vendedor.findMany({
-      select: {
-        id: true,
-        nome: true,
-      },
-    }),
-    prisma.rifaNumero.groupBy({
-      by: ["vendedorId"],
-      where: {
-        vendido: true,
-        vendedorId: {
-          not: null,
+  try {
+    const [vendedores, vendas] = await prisma.$transaction([
+      prisma.vendedor.findMany({
+        select: {
+          id: true,
+          nome: true,
         },
-      },
-      orderBy: {
-        vendedorId: "asc",
-      },
-      _count: {
-        id: true,
-      },
-    }),
-  ]);
+      }),
+      prisma.rifaNumero.groupBy({
+        by: ["vendedorId"],
+        where: {
+          vendido: true,
+          vendedorId: {
+            not: null,
+          },
+        },
+        orderBy: {
+          vendedorId: "asc",
+        },
+        _count: {
+          id: true,
+        },
+      }),
+    ]);
 
-  const vendasPorVendedor = new Map(
-    vendas.map((venda) => [venda.vendedorId, getCountId(venda._count)])
-  );
-  const nomes = [
-    ...new Set([
-      ...vendedoresPadrao,
-      ...vendedores.map((vendedor) => vendedor.nome),
-    ]),
-  ];
+    const vendasPorVendedor = new Map(
+      vendas.map((venda) => [venda.vendedorId, getCountId(venda._count)])
+    );
+    const nomes = [
+      ...new Set([
+        ...vendedoresPadrao,
+        ...vendedores.map((vendedor) => vendedor.nome),
+      ]),
+    ];
 
-  return nomes
-    .map((nome) => {
-      const vendedor = vendedores.find((item) => item.nome === nome);
+    return nomes
+      .map((nome) => {
+        const vendedor = vendedores.find((item) => item.nome === nome);
 
-      return {
-        nome,
-        vendas: vendedor ? vendasPorVendedor.get(vendedor.id) ?? 0 : 0,
-      };
-    })
-    .sort((a, b) => b.vendas - a.vendas || a.nome.localeCompare(b.nome))
-    .slice(0, 3);
+        return {
+          nome,
+          vendas: vendedor ? vendasPorVendedor.get(vendedor.id) ?? 0 : 0,
+        };
+      })
+      .sort((a, b) => b.vendas - a.vendas || a.nome.localeCompare(b.nome))
+      .slice(0, 3);
+  } catch (error) {
+    console.error("Erro ao carregar ranking dos vendedores:", error);
+    return vendedoresPadrao.map((nome) => ({ nome, vendas: 0 }));
+  }
 }
 
 export default async function Home() {

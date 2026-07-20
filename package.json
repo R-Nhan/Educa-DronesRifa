@@ -13,6 +13,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/adapter-neon": "^7.9.0",
     "@prisma/client": "^6.19.3",
     "jspdf": "^4.2.1",
     "next": "16.2.9",
