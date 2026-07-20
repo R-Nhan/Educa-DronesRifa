@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 
 import { prisma } from "@/lib/prisma";
+import { AvailableNumbersPdfButton } from "@/components/available-numbers-pdf-button";
 
 import "./home.css";
 
@@ -91,6 +92,12 @@ export default async function Home() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="export-card" aria-labelledby="titulo-export">
+        <h2 id="titulo-export">Exportar números disponíveis</h2>
+        <p>Gere um PDF com todos os números que ainda não foram vendidos.</p>
+        <AvailableNumbersPdfButton />
       </section>
     </main>
   );

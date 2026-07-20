@@ -122,6 +122,17 @@ async function getVendedorIdFromBody(body: CompradorBody) {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const numero = Number(searchParams.get("numero"));
+  const disponivel = searchParams.get("disponivel");
+
+  if (disponivel === "true") {
+    const rifas = await prisma.rifaNumero.findMany({
+      where: { vendido: false },
+      orderBy: { numero: "asc" },
+      select: { numero: true },
+    });
+
+    return NextResponse.json(rifas);
+  }
 
   if (Number.isInteger(numero) && numero > 0) {
     const rifa = await prisma.rifaNumero.findUnique({
