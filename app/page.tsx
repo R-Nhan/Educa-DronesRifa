@@ -71,7 +71,7 @@ export default async function Home() {
   return (
     <main className="ranking-page">
       <section className="ranking-card" aria-labelledby="titulo-ranking">
-        <h2 id="titulo-ranking">Ranking dos vendedores</h2>
+        <h2 id="titulo-ranking">Ranking dos Teste</h2>
 
         <div className="primeiro-lugar">
           <span className="trofeu" aria-hidden="true">
