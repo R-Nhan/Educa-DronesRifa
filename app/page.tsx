@@ -6,6 +6,15 @@ import "./home.css";
 
 const vendedoresPadrao = ["Ian", "Leandro", "Gabriel", "Heloisa"];
 
+function getCountId(count: unknown) {
+  if (typeof count !== "object" || count === null || !("id" in count)) {
+    return 0;
+  }
+
+  const id = count.id;
+  return typeof id === "number" ? id : 0;
+}
+
 async function getTopVendedores() {
   const [vendedores, vendas] = await prisma.$transaction([
     prisma.vendedor.findMany({
@@ -22,6 +31,9 @@ async function getTopVendedores() {
           not: null,
         },
       },
+      orderBy: {
+        vendedorId: "asc",
+      },
       _count: {
         id: true,
       },
@@ -29,7 +41,7 @@ async function getTopVendedores() {
   ]);
 
   const vendasPorVendedor = new Map(
-    vendas.map((venda) => [venda.vendedorId, venda._count.id])
+    vendas.map((venda) => [venda.vendedorId, getCountId(venda._count)])
   );
   const nomes = [
     ...new Set([

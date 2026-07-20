@@ -1,27 +1,29 @@
 -- CreateTable
-CREATE TABLE `Vendedor` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `nome` VARCHAR(191) NOT NULL,
-    `totalVendas` INTEGER NOT NULL DEFAULT 0,
+CREATE TABLE "Vendedor" (
+    "id" SERIAL NOT NULL,
+    "nome" TEXT NOT NULL,
+    "totalVendas" INTEGER NOT NULL DEFAULT 0,
 
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "Vendedor_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
-CREATE TABLE `RifaNumero` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `numero` INTEGER NOT NULL,
-    `vendido` BOOLEAN NOT NULL DEFAULT false,
-    `comprador` VARCHAR(191) NULL,
-    `cpfComprador` VARCHAR(191) NULL,
-    `telefoneComprador` VARCHAR(191) NULL,
-    `cidadeComprador` VARCHAR(191) NULL,
-    `vendedorId` INTEGER NULL,
-    `dataVenda` DATETIME(3) NULL,
+CREATE TABLE "RifaNumero" (
+    "id" SERIAL NOT NULL,
+    "numero" INTEGER NOT NULL,
+    "vendido" BOOLEAN NOT NULL DEFAULT false,
+    "comprador" TEXT,
+    "cpfComprador" TEXT,
+    "telefoneComprador" TEXT,
+    "cidadeComprador" TEXT,
+    "vendedorId" INTEGER,
+    "dataVenda" TIMESTAMP(3),
 
-    UNIQUE INDEX `RifaNumero_numero_key`(`numero`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CONSTRAINT "RifaNumero_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RifaNumero_numero_key" ON "RifaNumero"("numero");
 
 -- AddForeignKey
-ALTER TABLE `RifaNumero` ADD CONSTRAINT `RifaNumero_vendedorId_fkey` FOREIGN KEY (`vendedorId`) REFERENCES `Vendedor`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "RifaNumero" ADD CONSTRAINT "RifaNumero_vendedorId_fkey" FOREIGN KEY ("vendedorId") REFERENCES "Vendedor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
