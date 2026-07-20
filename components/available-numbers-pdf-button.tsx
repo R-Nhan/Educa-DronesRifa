@@ -37,6 +37,7 @@ export function AvailableNumbersPdfButton() {
       const marginTop = 24;
       const titleHeight = 18;
       const gap = 4;
+      const logoPath = "/imagens/logo.png";
 
       const availableWidth = pageWidth - marginLeft * 2;
       const availableHeight = pageHeight - marginTop * 2 - titleHeight - 20;
@@ -55,7 +56,14 @@ export function AvailableNumbersPdfButton() {
         pdf.text("Números disponíveis", marginLeft, titleHeight);
         pdf.setFontSize(10);
         pdf.text(`Total: ${numeros.length}`, marginLeft, titleHeight + 14);
-        pdf.text(`Página ${pageNumber}`, pageWidth - marginLeft, titleHeight + 14, { align: "right" });
+
+        try {
+          pdf.addImage(logoPath, "PNG", pageWidth - 118, 14, 58, 20);
+          pdf.setFontSize(10);
+          pdf.text("Educa Drones", pageWidth - 54, 28);
+        } catch {
+          // ignora erro caso a imagem não seja carregada
+        }
 
         let columns = Math.min(maxColumns, Math.max(1, Math.ceil(items.length / maxRows)));
         let rows = Math.ceil(items.length / columns);
@@ -100,24 +108,26 @@ export function AvailableNumbersPdfButton() {
   }
 
   return (
-    <div className="pdf-export-button">
+    <div className="pdf-export-button" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.5rem" }}>
       <button
         type="button"
         onClick={handleGeneratePdf}
         disabled={loading}
         style={{
-          border: "none",
-          background: "transparent",
-          color: "#4b5563",
+          border: "1px solid #d1d5db",
+          background: loading ? "#f3f4f6" : "#111827",
+          color: loading ? "#6b7280" : "#ffffff",
           cursor: loading ? "default" : "pointer",
-          padding: 0,
+          padding: "0.7rem 1.1rem",
           fontSize: "0.95rem",
-          textDecoration: "underline",
+          fontWeight: 600,
+          borderRadius: "999px",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
         }}
       >
         {loading ? "Gerando..." : "Gerar PDF"}
       </button>
-      {message ? <p>{message}</p> : null}
+      {message ? <p style={{ margin: 0, fontSize: "0.9rem", color: "#4b5563" }}>{message}</p> : null}
     </div>
   );
 }
