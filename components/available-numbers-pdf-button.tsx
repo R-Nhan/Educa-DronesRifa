@@ -34,41 +34,63 @@ export function AvailableNumbersPdfButton() {
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const marginLeft = 10;
-      const marginRight = 10;
-      const marginTop = 18;
-      const topAreaHeight = 16;
-      const gap = 2;
       const logoPath = "/imagens/Logo.png";
 
-      const availableWidth = pageWidth - marginLeft - marginRight;
-      const availableHeight = pageHeight - marginTop - topAreaHeight - 8;
-      const minCellWidth = 8;
-      const minCellHeight = 7;
-      const maxColumns = Math.max(1, Math.floor((availableWidth + gap) / (minCellWidth + gap)));
-      const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (minCellHeight + gap)));
+      // Cria um pdf temporário só para obter as dimensões A4 em mm
+      const tempPdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pWidth = tempPdf.internal.pageSize.getWidth();
+      const pHeight = tempPdf.internal.pageSize.getHeight();
 
-      const drawPage = (items: number[]) => {
-        pdf.setFontSize(12);
+      const marginLeft = 8;
+      const marginRight = 8;
+      const marginTop = 10;
+      const topAreaHeight = 14;
+      const gap = 1.2;
+      const minCellWidth = 6;
+      const minCellHeight = 6;
+
+      const computeLayout = (pageW: number, pageH: number) => {
+        const availableWidth = pageW - marginLeft - marginRight;
+        const availableHeight = pageH - marginTop - topAreaHeight - 6;
+        const maxColumns = Math.max(1, Math.floor((availableWidth + gap) / (minCellWidth + gap)));
+        const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (minCellHeight + gap)));
+        const itemsPerPage = maxColumns * maxRows;
+        return { pageW, pageH, availableWidth, availableHeight, maxColumns, maxRows, itemsPerPage };
+      };
+
+      const portrait = computeLayout(pWidth, pHeight);
+      const landscape = computeLayout(pHeight, pWidth);
+
+      const useLandscape = landscape.itemsPerPage > portrait.itemsPerPage;
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: useLandscape ? "landscape" : "portrait" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const layout = useLandscape ? landscape : portrait;
+
+      const drawPage = (items: number[], pageIndex: number) => {
+        if (pageIndex > 0) pdf.addPage();
+
+        pdf.setFontSize(11);
         pdf.text("Números disponíveis", marginLeft, marginTop);
-        pdf.setFontSize(8);
-        pdf.text(`Total: ${numeros.length}`, marginLeft, marginTop + 7);
-        pdf.text("Educa Drones", pageWidth - marginRight, marginTop + 7, { align: "right" });
+        pdf.setFontSize(7.5);
+        pdf.text(`Total: ${numeros.length}`, marginLeft, marginTop + 6);
+        pdf.text("Educa Drones", pageWidth - marginRight, marginTop + 6, { align: "right" });
 
         try {
-          pdf.addImage(logoPath, "PNG", pageWidth - marginRight - 36, 3, 34, 14);
+          pdf.addImage(logoPath, "PNG", pageWidth - marginRight - 34, 3, 32, 13);
         } catch {
           // ignora erro caso a imagem não seja carregada
         }
 
-        let columns = maxColumns;
+        let columns = layout.maxColumns;
         let rows = Math.ceil(items.length / columns);
-        while (rows > maxRows && columns > 1) {
+        while (rows > layout.maxRows && columns > 1) {
           columns -= 1;
           rows = Math.ceil(items.length / columns);
         }
 
-        const cellWidth = (availableWidth - (columns - 1) * gap) / columns;
-        const cellHeight = (availableHeight - (rows - 1) * gap) / rows;
+        const cellWidth = (layout.availableWidth - (columns - 1) * gap) / columns;
+        const cellHeight = (layout.availableHeight - (rows - 1) * gap) / rows;
         const startY = marginTop + topAreaHeight;
 
         items.forEach((numero, index) => {
@@ -77,44 +99,17 @@ export function AvailableNumbersPdfButton() {
           const x = marginLeft + columnIndex * (cellWidth + gap);
           const y = startY + rowIndex * (cellHeight + gap);
 
-          pdf.setDrawColor(200, 200, 200);
-          pdf.setLineWidth(0.2);
-          pdf.rect(x, y, cellWidth, cellHeight, "S");
-
-          pdf.setFontSize(6);
-          pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.6, { align: "center" });
+          pdf.setFontSize(5.5);
+          pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.8, { align: "center" });
         });
       };
 
-      drawPage(numeros);
-
-      pdf.save("numeros_disponiveis.pdf");
-      setMessage(`PDF gerado com ${numeros.length} números disponíveis.`);
-    } catch (error) {
-      const text = error instanceof Error ? error.message : String(error);
-      setMessage(`Erro: ${text}`);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div className="pdf-export-button" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.5rem" }}>
-      <button
-        type="button"
-        onClick={handleGeneratePdf}
-        disabled={loading}
-        style={{
-          border: "1px solid #d1d5db",
-          background: loading ? "#f3f4f6" : "#111827",
-          color: loading ? "#6b7280" : "#ffffff",
-          cursor: loading ? "default" : "pointer",
-          padding: "0.7rem 1.1rem",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-          borderRadius: "999px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-        }}
+      // Calcula quantos por página com o layout escolhido e gera o mínimo de páginas
+      const itemsPerPage = layout.maxColumns * layout.maxRows;
+      for (let pageIndex = 0; pageIndex < numeros.length; pageIndex += itemsPerPage) {
+        const pageItems = numeros.slice(pageIndex, pageIndex + itemsPerPage);
+        drawPage(pageItems, Math.floor(pageIndex / itemsPerPage));
+      }
       >
         {loading ? "Gerando..." : "Gerar PDF"}
       </button>
