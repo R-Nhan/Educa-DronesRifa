@@ -30,11 +30,11 @@ export function AvailableNumbersPdfButton() {
         return;
       }
 
-      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pdf = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const marginLeft = 15;
-      const marginTop = 20;
+      const marginLeft = 28;
+      const marginTop = 24;
       const titleHeight = 18;
       const gap = 4;
       const logoPath = "/imagens/Logo.png";
@@ -47,6 +47,8 @@ export function AvailableNumbersPdfButton() {
       const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (minCellHeight + gap)));
       const maxItemsPerPage = maxColumns * maxRows;
 
+      const totalPages = Math.ceil(numeros.length / maxItemsPerPage);
+
       const drawPage = (items: number[], pageNumber: number) => {
         if (pageNumber > 1) {
           pdf.addPage();
@@ -56,7 +58,8 @@ export function AvailableNumbersPdfButton() {
         pdf.text("Números disponíveis", marginLeft, titleHeight);
         pdf.setFontSize(10);
         pdf.text(`Total: ${numeros.length}`, marginLeft, titleHeight + 14);
-        pdf.text("Educa Drones", pageWidth - marginLeft, titleHeight, { align: "right" });
+        pdf.text("Educa Drones", marginLeft, 26);
+        pdf.text(`Página ${pageNumber} de ${totalPages}`, pageWidth - 92, 26);
 
         try {
           pdf.addImage(logoPath, "PNG", pageWidth - 118, 14, 58, 20);
