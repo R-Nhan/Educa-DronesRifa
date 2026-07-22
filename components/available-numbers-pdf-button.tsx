@@ -116,8 +116,8 @@ export function AvailableNumbersPdfButton() {
         onClick={handleGeneratePdf}
         disabled={loading}
         style={{
-          background: loading ? "#f3f4f6" : "#F3E7C5",
-          color: loading ? "#6b7280" : "#143A6B",
+          background: loading ? "#f3f4f6" : "#143A6B",
+          color: loading ? "#6b7280" : "#F3E7C5",
           borderRadius: "6px",
           padding: "12px 18px",
           textDecoration: "none",

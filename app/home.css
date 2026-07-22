@@ -98,6 +98,11 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  margin-bottom: 24px;
+}
+
+.pdf-export-button {
+  margin-top: 8px;
 }
 
 .ranking-export {
