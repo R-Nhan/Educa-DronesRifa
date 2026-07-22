@@ -116,15 +116,15 @@ export function AvailableNumbersPdfButton() {
         onClick={handleGeneratePdf}
         disabled={loading}
         style={{
-          border: "1px solid #d1d5db",
-          background: loading ? "#f3f4f6" : "#111827",
-          color: loading ? "#6b7280" : "#ffffff",
+          background: loading ? "#f3f4f6" : "#F3E7C5",
+          color: loading ? "#6b7280" : "#143A6B",
+          borderRadius: "6px",
+          padding: "12px 18px",
+          textDecoration: "none",
+          fontSize: "1rem",
+          fontWeight: 700,
+          border: "none",
           cursor: loading ? "default" : "pointer",
-          padding: "0.7rem 1.1rem",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-          borderRadius: "999px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
         }}
       >
         {loading ? "Gerando..." : "Gerar PDF"}
