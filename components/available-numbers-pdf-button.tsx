@@ -30,75 +30,71 @@ export function AvailableNumbersPdfButton() {
         return;
       }
 
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const marginLeft = 15;
+      const marginTop = 20;
+      const titleHeight = 18;
+      const gap = 4;
       const logoPath = "/imagens/Logo.png";
 
-      // Parâmetros base para layout em uma única página
-      const marginLeft = 12;
-      const marginRight = 12;
-      const marginTop = 18;
-      const titleHeight = 14;
-      const gap = 3;
-      const minCellWidth = 12;
-      const minCellHeight = 8;
+      const availableWidth = pageWidth - marginLeft * 2;
+      const availableHeight = pageHeight - marginTop * 2 - titleHeight - 20;
+      const minCellWidth = 20;
+      const minCellHeight = 12;
+      const maxColumns = Math.max(1, Math.floor((availableWidth + gap) / (minCellWidth + gap)));
+      const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (minCellHeight + gap)));
+      const maxItemsPerPage = maxColumns * maxRows;
 
-      const count = numeros.length;
-      // tenta aproximar um retângulo compacto (mais colunas que linhas)
-      let columns = Math.ceil(Math.sqrt(count) * 1.4);
-      if (columns < 1) columns = 1;
-      let rows = Math.ceil(count / columns);
+      const drawPage = (items: number[], pageNumber: number) => {
+        if (pageNumber > 1) {
+          pdf.addPage();
+        }
 
-      // Ajusta até que cada célula seja pelo menos o tamanho mínimo
-      const pageWidthEstimate = marginLeft + marginRight + columns * minCellWidth + (columns - 1) * gap;
-      const pageHeightEstimate = marginTop + titleHeight + rows * minCellHeight + (rows - 1) * gap + 12;
+        pdf.setFontSize(12);
+        pdf.text("Números disponíveis", marginLeft, titleHeight);
+        pdf.setFontSize(10);
+        pdf.text(`Total: ${numeros.length}`, marginLeft, titleHeight + 14);
+        pdf.text("Educa Drones", pageWidth - marginLeft, titleHeight, { align: "right" });
 
-      while (rows > 1 && (pageHeightEstimate > 200 && columns > 1)) {
-        // reduz colunas para tentar diminuir altura
-        columns -= 1;
-        rows = Math.ceil(count / columns);
+        try {
+          pdf.addImage(logoPath, "PNG", pageWidth - 118, 14, 58, 20);
+        } catch {
+          // ignora erro caso a imagem não seja carregada
+        }
+
+        let columns = Math.min(maxColumns, Math.max(1, Math.ceil(items.length / maxRows)));
+        let rows = Math.ceil(items.length / columns);
+
+        while (rows > maxRows && columns > 1) {
+          columns -= 1;
+          rows = Math.ceil(items.length / columns);
+        }
+
+        const cellWidth = Math.max(minCellWidth, (availableWidth - (columns - 1) * gap) / columns);
+        const cellHeight = Math.max(minCellHeight, (availableHeight - (rows - 1) * gap) / rows);
+        const startY = marginTop + 34;
+
+        items.forEach((numero, index) => {
+          const columnIndex = index % columns;
+          const rowIndex = Math.floor(index / columns);
+          const x = marginLeft + columnIndex * (cellWidth + gap);
+          const y = startY + rowIndex * (cellHeight + gap);
+
+          pdf.setDrawColor(200, 200, 200);
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(x, y, cellWidth, cellHeight, "S");
+
+          pdf.setFontSize(7.5);
+          pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.8, { align: "center" });
+        });
+      };
+
+      for (let pageIndex = 0; pageIndex < numeros.length; pageIndex += maxItemsPerPage) {
+        const pageItems = numeros.slice(pageIndex, pageIndex + maxItemsPerPage);
+        drawPage(pageItems, Math.floor(pageIndex / maxItemsPerPage) + 1);
       }
-
-      const pageWidth = Math.max(180, pageWidthEstimate);
-      const pageHeight = Math.max(120, pageHeightEstimate);
-
-      const pdf = new jsPDF({ unit: "mm", format: [pageWidth, pageHeight] });
-
-      // recalcula dimensões finais com os valores reais
-      const availableWidth = pageWidth - marginLeft - marginRight;
-      const availableHeight = pageHeight - marginTop - titleHeight - 8;
-      columns = Math.max(1, Math.floor((availableWidth + gap) / (minCellWidth + gap)));
-      rows = Math.ceil(count / columns);
-
-      const cellWidth = (availableWidth - (columns - 1) * gap) / columns;
-      const cellHeight = (availableHeight - (rows - 1) * gap) / rows;
-
-      pdf.setFontSize(12);
-      pdf.text("Números disponíveis", marginLeft, marginTop);
-      pdf.setFontSize(9);
-      pdf.text(`Total: ${numeros.length}`, marginLeft, marginTop + 8);
-      pdf.text("Educa Drones", pageWidth - marginRight, marginTop, { align: "right" });
-
-      try {
-        pdf.addImage(logoPath, "PNG", pageWidth - marginRight - 50, 6, 46, 16);
-      } catch {
-        // ignora erro caso a imagem não seja carregada
-      }
-
-      const startY = marginTop + titleHeight + 4;
-
-      numeros.forEach((numero, index) => {
-        const columnIndex = index % columns;
-        const rowIndex = Math.floor(index / columns);
-        const x = marginLeft + columnIndex * (cellWidth + gap);
-        const y = startY + rowIndex * (cellHeight + gap);
-
-        pdf.setDrawColor(200, 200, 200);
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(x, y, cellWidth, cellHeight, "S");
-
-        pdf.setFontSize(7);
-        pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.6, { align: "center" });
-      });
-
 
       pdf.save("numeros_disponiveis.pdf");
       setMessage(`PDF gerado com ${numeros.length} números disponíveis.`);
