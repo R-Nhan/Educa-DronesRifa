@@ -97,13 +97,13 @@ export default async function Home() {
             </div>
           ))}
         </div>
-        <section className="export-card" aria-labelledby="titulo-export">
-          <AvailableNumbersPdfButton />
-        </section>
-      </section>
 
-      <section className="export-card" aria-labelledby="titulo-export">
-        <AvailableNumbersPdfButton />
+        <div className="ranking-export">
+          <div>
+            <p>Baixe um PDF discreto com todos os números ainda disponíveis.</p>
+          </div>
+          <AvailableNumbersPdfButton />
+        </div>
       </section>
     </main>
   );

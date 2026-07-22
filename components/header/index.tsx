@@ -7,7 +7,7 @@ export function Header() {
       <div className="header-actions">
         <Link className="header-link-venda" href="/dados">
           Venda
-        </Link>
+        </Link> 
       </div>
 
       <div className="brand">

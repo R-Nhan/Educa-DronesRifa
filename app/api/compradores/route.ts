@@ -316,28 +316,50 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const numero = Number(searchParams.get("numero"));
+  const numerosParam = searchParams.get("numeros");
 
-  if (!Number.isInteger(numero) || numero <= 0) {
+  const numeros = numerosParam
+    ? Array.from(
+        new Set(
+          numerosParam
+            .split(",")
+            .map((item) => Number(item.trim()))
+            .filter((value) => Number.isInteger(value) && value > 0)
+        )
+      )
+    : Number.isInteger(numero) && numero > 0
+    ? [numero]
+    : [];
+
+  if (numeros.length === 0) {
     return NextResponse.json(
-      { message: "Informe um numero da rifa valido." },
+      { message: "Informe um ou mais numeros da rifa validos." },
       { status: 400 }
     );
   }
 
-  const rifaExiste = await prisma.rifaNumero.findUnique({
-    where: { numero },
-    select: { id: true },
+  const rifasExistentes = await prisma.rifaNumero.findMany({
+    where: { numero: { in: numeros } },
+    select: { numero: true },
   });
 
-  if (!rifaExiste) {
+  const existentesSet = new Set(rifasExistentes.map((rifa) => rifa.numero));
+  const numerosInexistentes = numeros.filter((numero) => !existentesSet.has(numero));
+
+  if (numerosInexistentes.length > 0) {
     return NextResponse.json(
-      { message: "Numero da rifa nao encontrado." },
+      {
+        message:
+          numerosInexistentes.length === 1
+            ? `O numero ${numerosInexistentes[0]} nao existe na rifa.`
+            : `Os numeros ${numerosInexistentes.join(", ")} nao existem na rifa.`,
+      },
       { status: 404 }
     );
   }
 
-  const rifa = await prisma.rifaNumero.update({
-    where: { numero },
+  await prisma.rifaNumero.updateMany({
+    where: { numero: { in: numeros } },
     data: {
       vendido: false,
       comprador: null,
@@ -349,5 +371,11 @@ export async function DELETE(request: Request) {
     },
   });
 
-  return NextResponse.json(rifa);
+  return NextResponse.json({
+    message:
+      numeros.length === 1
+        ? `Numero ${numeros[0]} cancelado com sucesso.`
+        : `${numeros.length} numeros cancelados com sucesso.`,
+    numeros,
+  });
 }
