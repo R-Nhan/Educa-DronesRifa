@@ -6,7 +6,7 @@ export function Header() {
     <header className="header">
       <div className="header-actions">
         <Link className="header-link-venda" href="/dados">
-          Venda
+          Vendas
         </Link> 
       </div>
 
