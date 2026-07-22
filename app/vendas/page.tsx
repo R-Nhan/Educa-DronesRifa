@@ -21,8 +21,7 @@ export default function VendasPage() {
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  const [selecionados, setSelecionados] = useState<number[]>([]);
-  const [processandoCancelamento, setProcessandoCancelamento] = useState<number | "bulk" | null>(null);
+  const [processandoCancelamento, setProcessandoCancelamento] = useState<number | null>(null);
 
   async function carregarVendas() {
     setCarregando(true);
@@ -43,66 +42,6 @@ export default function VendasPage() {
       setErro(error instanceof Error ? error.message : "Erro inesperado.");
     } finally {
       setCarregando(false);
-      setSelecionados([]);
-    }
-  }
-
-  function toggleSelecionado(numero: number) {
-    setSelecionados((current) =>
-      current.includes(numero)
-        ? current.filter((item) => item !== numero)
-        : [...current, numero]
-    );
-  }
-
-  function toggleSelecionarTodos() {
-    setSelecionados((current) =>
-      current.length === vendas.length
-        ? []
-        : vendas.map((venda) => venda.numero)
-    );
-  }
-
-  async function cancelarVendasSelecionadas() {
-    if (selecionados.length === 0) {
-      return;
-    }
-
-    const confirmado = window.confirm(
-      `Cancelar a venda dos números ${selecionados.join(", ")}? Essa ação vai deixar esses números disponíveis novamente.`
-    );
-    if (!confirmado) {
-      return;
-    }
-
-    setMensagem(null);
-    setErro(null);
-    setProcessandoCancelamento("bulk");
-
-    try {
-      const response = await fetch(
-        `/api/compradores?numeros=${selecionados.join(",")}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Erro ao cancelar as vendas.");
-      }
-
-      setMensagem(
-        selecionados.length === 1
-          ? `Venda do número ${selecionados[0]} cancelada com sucesso.`
-          : `${selecionados.length} vendas canceladas com sucesso.`
-      );
-      await carregarVendas();
-    } catch (error) {
-      setErro(error instanceof Error ? error.message : "Erro inesperado.");
-    } finally {
-      setProcessandoCancelamento(null);
     }
   }
 
@@ -161,89 +100,55 @@ export default function VendasPage() {
         ) : vendas.length === 0 ? (
           <div className="vendas-empty">Nenhuma venda registrada no momento.</div>
         ) : (
-          <>
-            <div className="vendas-actions">
-              <label className="vendas-select-all">
-                <input
-                  type="checkbox"
-                  checked={selecionados.length === vendas.length}
-                  onChange={toggleSelecionarTodos}
-                />
-                Selecionar todos
-              </label>
-
-              <button
-                type="button"
-                className="vendas-bulk-cancel-button"
-                disabled={selecionados.length === 0 || processandoCancelamento !== null}
-                onClick={cancelarVendasSelecionadas}
-              >
-                {processandoCancelamento === "bulk"
-                  ? "Cancelando..."
-                  : `Cancelar ${selecionados.length} selecionado${selecionados.length !== 1 ? "s" : ""}`}
-              </button>
-            </div>
-
-            <div className="vendas-table-wrapper">
-              <table className="vendas-table">
-                <thead>
-                  <tr>
-                    <th className="vendas-checkbox-column">
-                      <span className="sr-only">Selecionar</span>
-                    </th>
-                    <th>Número</th>
-                    <th>Comprador</th>
-                    <th>CPF</th>
-                    <th>Telefone</th>
-                    <th>Cidade</th>
-                    <th>Vendedor</th>
-                    <th>Data da venda</th>
-                    <th>Ação</th>
+          <div className="vendas-table-wrapper">
+            <table className="vendas-table">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Comprador</th>
+                  <th>CPF</th>
+                  <th>Telefone</th>
+                  <th>Cidade</th>
+                  <th>Vendedor</th>
+                  <th>Data da venda</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                {vendas.map((venda) => (
+                  <tr key={venda.id}>
+                    <td>{venda.numero}</td>
+                    <td>{venda.comprador ?? "-"}</td>
+                    <td>{venda.cpfComprador ?? "-"}</td>
+                    <td>{venda.telefoneComprador ?? "-"}</td>
+                    <td>{venda.cidadeComprador ?? "-"}</td>
+                    <td>{venda.vendedor?.nome ?? "-"}</td>
+                    <td>
+                      {venda.dataVenda
+                        ? new Date(venda.dataVenda).toLocaleString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-"}
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        className="vendas-cancel-button"
+                        disabled={processandoCancelamento !== null}
+                        onClick={() => cancelarVenda(venda.numero)}
+                      >
+                        {processandoCancelamento === venda.numero ? "Cancelando..." : "Cancelar"}
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {vendas.map((venda) => (
-                    <tr key={venda.id}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selecionados.includes(venda.numero)}
-                          onChange={() => toggleSelecionado(venda.numero)}
-                        />
-                      </td>
-                      <td>{venda.numero}</td>
-                      <td>{venda.comprador ?? "-"}</td>
-                      <td>{venda.cpfComprador ?? "-"}</td>
-                      <td>{venda.telefoneComprador ?? "-"}</td>
-                      <td>{venda.cidadeComprador ?? "-"}</td>
-                      <td>{venda.vendedor?.nome ?? "-"}</td>
-                      <td>
-                        {venda.dataVenda
-                          ? new Date(venda.dataVenda).toLocaleString("pt-BR", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "-"}
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="vendas-cancel-button"
-                          disabled={processandoCancelamento !== null}
-                          onClick={() => cancelarVenda(venda.numero)}
-                        >
-                          {processandoCancelamento === venda.numero ? "Cancelando..." : "Cancelar"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </main>
