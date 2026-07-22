@@ -97,10 +97,7 @@ export default async function Home() {
             </div>
           ))}
         </div>
-
-        <div className="ranking-export ranking-export-button-only">
-          <AvailableNumbersPdfButton />
-        </div>
+        <AvailableNumbersPdfButton />
       </section>
     </main>
   );
