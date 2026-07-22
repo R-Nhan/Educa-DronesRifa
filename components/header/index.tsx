@@ -1,15 +1,13 @@
 import "@/components/header/header.css";
 import Link from "next/link";
-import { AvailableNumbersPdfButton } from "@/components/available-numbers-pdf-button";
 
 export function Header() {
   return (
     <header className="header">
       <div className="header-actions">
-        <AvailableNumbersPdfButton />
         <Link className="header-link-venda" href="/dados">
           Vendas
-        </Link>
+        </Link> 
       </div>
 
       <div className="brand">
