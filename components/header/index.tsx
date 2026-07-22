@@ -4,9 +4,14 @@ import Link from "next/link";
 export function Header() {
   return (
     <header className="header">
-      <Link className="header-link-venda" href="/dados">
-        Venda
-      </Link>
+      <div className="header-actions">
+        <Link className="header-link-venda" href="/dados">
+          Venda
+        </Link>
+        <Link className="header-link-venda" href="/vendas">
+          Vendas
+        </Link>
+      </div>
 
       <div className="brand">
         <h1>

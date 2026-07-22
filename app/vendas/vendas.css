@@ -1,0 +1,150 @@
+.vendas-page {
+  width: 100%;
+  min-height: calc(100vh - 100px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px;
+  color: #143A6B;
+}
+
+.vendas-header {
+  width: min(100%, 1120px);
+  margin-bottom: 32px;
+}
+
+.vendas-kicker {
+  display: block;
+  color: #143A6B;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.vendas-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.vendas-header p {
+  margin: 16px 0 0;
+  max-width: 760px;
+  color: #4d6178;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.vendas-status {
+  width: min(100%, 1120px);
+  margin-bottom: 24px;
+}
+
+.vendas-mensagem {
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.vendas-mensagem-sucesso {
+  background: rgba(20, 58, 107, 0.1);
+  color: #143A6B;
+}
+
+.vendas-mensagem-erro {
+  background: #ffe7df;
+  color: #8f2f1f;
+}
+
+.vendas-lista-container {
+  width: min(100%, 1120px);
+}
+
+.vendas-loading,
+.vendas-empty {
+  width: 100%;
+  padding: 36px;
+  border-radius: 8px;
+  background: #fffaf0;
+  border: 1px solid rgba(20, 58, 107, 0.16);
+  color: #143A6B;
+}
+
+.vendas-table-wrapper {
+  overflow-x: auto;
+}
+
+.vendas-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 20px 45px rgba(20, 58, 107, 0.08);
+}
+
+.vendas-table th,
+.vendas-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(20, 58, 107, 0.12);
+}
+
+.vendas-table th {
+  background: #f3f4f6;
+  color: #143a6b;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.vendas-table td {
+  background: #ffffff;
+  color: #1f365f;
+  font-size: 0.95rem;
+}
+
+.vendas-table tr:last-child td {
+  border-bottom: none;
+}
+
+.vendas-cancel-button {
+  border: 1px solid #ef4444;
+  background: #fff1f2;
+  color: #b91c1c;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.vendas-cancel-button:hover {
+  background: #fee2e2;
+}
+
+.vendas-cancel-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 980px) {
+  .vendas-table th,
+  .vendas-table td {
+    padding: 12px 10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .vendas-page {
+    padding: 32px 14px;
+  }
+
+  .vendas-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .vendas-table th,
+  .vendas-table td {
+    font-size: 0.85rem;
+    padding: 10px 8px;
+  }
+}

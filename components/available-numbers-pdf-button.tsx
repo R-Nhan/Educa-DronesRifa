@@ -56,7 +56,7 @@ export function AvailableNumbersPdfButton() {
         pdf.text("Números disponíveis", marginLeft, titleHeight);
         pdf.setFontSize(10);
         pdf.text(`Total: ${numeros.length}`, marginLeft, titleHeight + 14);
-        pdf.text("Educa Drones", marginLeft, 26);
+        pdf.text("Educa Drones", pageWidth - marginLeft, titleHeight, { align: "right" });
 
         try {
           pdf.addImage(logoPath, "PNG", pageWidth - 118, 14, 58, 20);

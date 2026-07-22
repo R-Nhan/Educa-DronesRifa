@@ -123,12 +123,23 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const numero = Number(searchParams.get("numero"));
   const disponivel = searchParams.get("disponivel");
+  const vendido = searchParams.get("vendido");
 
   if (disponivel === "true") {
     const rifas = await prisma.rifaNumero.findMany({
       where: { vendido: false },
       orderBy: { numero: "asc" },
       select: { numero: true },
+    });
+
+    return NextResponse.json(rifas);
+  }
+
+  if (vendido === "true") {
+    const rifas = await prisma.rifaNumero.findMany({
+      where: { vendido: true },
+      orderBy: { numero: "asc" },
+      include: { vendedor: true },
     });
 
     return NextResponse.json(rifas);
