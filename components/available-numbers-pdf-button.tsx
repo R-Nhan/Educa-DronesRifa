@@ -33,48 +33,43 @@ export function AvailableNumbersPdfButton() {
       const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const marginLeft = 15;
+      const marginLeft = 10;
+      const marginRight = 10;
       const marginTop = 18;
-      const titleHeight = 18;
-      const gap = 3;
+      const topAreaHeight = 16;
+      const gap = 2;
       const logoPath = "/imagens/Logo.png";
 
-      const availableWidth = pageWidth - marginLeft * 2;
-      const availableHeight = pageHeight - marginTop * 2 - titleHeight - 14;
-      const minCellWidth = 14;
-      const minCellHeight = 9;
+      const availableWidth = pageWidth - marginLeft - marginRight;
+      const availableHeight = pageHeight - marginTop - topAreaHeight - 8;
+      const minCellWidth = 8;
+      const minCellHeight = 7;
       const maxColumns = Math.max(1, Math.floor((availableWidth + gap) / (minCellWidth + gap)));
       const maxRows = Math.max(1, Math.floor((availableHeight + gap) / (minCellHeight + gap)));
-      const maxItemsPerPage = maxColumns * maxRows;
 
-      const drawPage = (items: number[], pageNumber: number) => {
-        if (pageNumber > 1) {
-          pdf.addPage();
-        }
-
+      const drawPage = (items: number[]) => {
         pdf.setFontSize(12);
-        pdf.text("Números disponíveis", marginLeft, titleHeight);
-        pdf.setFontSize(9);
-        pdf.text(`Total: ${numeros.length}`, marginLeft, titleHeight + 8);
-        pdf.text("Educa Drones", pageWidth - marginLeft - 58, titleHeight + 8, { align: "right" });
+        pdf.text("Números disponíveis", marginLeft, marginTop);
+        pdf.setFontSize(8);
+        pdf.text(`Total: ${numeros.length}`, marginLeft, marginTop + 7);
+        pdf.text("Educa Drones", pageWidth - marginRight, marginTop + 7, { align: "right" });
 
         try {
-          pdf.addImage(logoPath, "PNG", pageWidth - marginLeft - 58, 5, 52, 18);
+          pdf.addImage(logoPath, "PNG", pageWidth - marginRight - 36, 3, 34, 14);
         } catch {
           // ignora erro caso a imagem não seja carregada
         }
 
-        let columns = Math.min(maxColumns, Math.max(1, Math.ceil(items.length / maxRows)));
+        let columns = maxColumns;
         let rows = Math.ceil(items.length / columns);
-
         while (rows > maxRows && columns > 1) {
           columns -= 1;
           rows = Math.ceil(items.length / columns);
         }
 
-        const cellWidth = Math.max(minCellWidth, (availableWidth - (columns - 1) * gap) / columns);
-        const cellHeight = Math.max(minCellHeight, (availableHeight - (rows - 1) * gap) / rows);
-        const startY = marginTop + 34;
+        const cellWidth = (availableWidth - (columns - 1) * gap) / columns;
+        const cellHeight = (availableHeight - (rows - 1) * gap) / rows;
+        const startY = marginTop + topAreaHeight;
 
         items.forEach((numero, index) => {
           const columnIndex = index % columns;
@@ -83,18 +78,15 @@ export function AvailableNumbersPdfButton() {
           const y = startY + rowIndex * (cellHeight + gap);
 
           pdf.setDrawColor(200, 200, 200);
-          pdf.setFillColor(255, 255, 255);
+          pdf.setLineWidth(0.2);
           pdf.rect(x, y, cellWidth, cellHeight, "S");
 
-          pdf.setFontSize(7.5);
-          pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.8, { align: "center" });
+          pdf.setFontSize(6);
+          pdf.text(String(numero), x + cellWidth / 2, y + cellHeight / 2 + 1.6, { align: "center" });
         });
       };
 
-      for (let pageIndex = 0; pageIndex < numeros.length; pageIndex += maxItemsPerPage) {
-        const pageItems = numeros.slice(pageIndex, pageIndex + maxItemsPerPage);
-        drawPage(pageItems, Math.floor(pageIndex / maxItemsPerPage) + 1);
-      }
+      drawPage(numeros);
 
       pdf.save("numeros_disponiveis.pdf");
       setMessage(`PDF gerado com ${numeros.length} números disponíveis.`);
