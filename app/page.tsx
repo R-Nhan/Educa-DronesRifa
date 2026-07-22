@@ -98,10 +98,7 @@ export default async function Home() {
           ))}
         </div>
 
-        <div className="ranking-export">
-          <div>
-            <p>Baixe um PDF discreto com todos os números ainda disponíveis.</p>
-          </div>
+        <div className="ranking-export ranking-export-button-only">
           <AvailableNumbersPdfButton />
         </div>
       </section>

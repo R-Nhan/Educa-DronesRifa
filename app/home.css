@@ -103,7 +103,7 @@
 .ranking-export {
   margin-top: 24px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 16px;
   padding: 18px 20px;
@@ -112,10 +112,8 @@
   background: #ffffff;
 }
 
-.ranking-export p {
-  margin: 0;
-  color: #4d6178;
-  line-height: 1.5;
+.ranking-export-button-only {
+  justify-content: flex-end;
 }
 
 @media (max-width: 620px) {
