@@ -30,11 +30,11 @@ export function AvailableNumbersPdfButton() {
         return;
       }
 
-      const pdf = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const marginLeft = 28;
-      const marginTop = 24;
+      const marginLeft = 15;
+      const marginTop = 20;
       const titleHeight = 18;
       const gap = 4;
       const logoPath = "/imagens/Logo.png";

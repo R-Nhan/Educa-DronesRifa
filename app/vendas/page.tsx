@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatCPF, formatTelefone } from "@/lib/format";
 import "./vendas.css";
 
 type Venda = {
@@ -21,7 +22,54 @@ export default function VendasPage() {
   const [carregando, setCarregando] = useState(true);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
-  const [processandoCancelamento, setProcessandoCancelamento] = useState<number | null>(null);
+  const [processandoCancelamento, setProcessandoCancelamento] = useState<number | string | null>(null);
+
+  type VendaBloco = {
+    start: number;
+    end: number;
+    comprador: string | null;
+    cpfComprador: string | null;
+    telefoneComprador: string | null;
+    cidadeComprador: string | null;
+    vendedorNome: string | null;
+    dataVenda: string | null;
+  };
+
+  function agruparVendasEmBlocos(vendas: Venda[]) {
+    const vendasOrdenadas = [...vendas].sort((a, b) => a.numero - b.numero);
+    const blocos: VendaBloco[] = [];
+
+    for (const venda of vendasOrdenadas) {
+      const ultimoBloco = blocos[blocos.length - 1];
+      const mesmoVendedor = ultimoBloco?.vendedorNome === venda.vendedor?.nome;
+      const mesmaVenda =
+        ultimoBloco &&
+        ultimoBloco.comprador === venda.comprador &&
+        ultimoBloco.cpfComprador === venda.cpfComprador &&
+        ultimoBloco.telefoneComprador === venda.telefoneComprador &&
+        ultimoBloco.cidadeComprador === venda.cidadeComprador &&
+        ultimoBloco.dataVenda === venda.dataVenda &&
+        mesmoVendedor &&
+        venda.numero === ultimoBloco.end + 1;
+
+      if (mesmaVenda) {
+        ultimoBloco.end = venda.numero;
+      } else {
+        blocos.push({
+          start: venda.numero,
+          end: venda.numero,
+          comprador: venda.comprador,
+          cpfComprador: venda.cpfComprador,
+          telefoneComprador: venda.telefoneComprador,
+          cidadeComprador: venda.cidadeComprador,
+          vendedorNome: venda.vendedor?.nome ?? null,
+          dataVenda: venda.dataVenda,
+        });
+      }
+    }
+
+    return blocos;
+  }
 
   async function carregarVendas() {
     setCarregando(true);
@@ -45,9 +93,10 @@ export default function VendasPage() {
     }
   }
 
-  async function cancelarVenda(numero: number) {
+  async function cancelarVendaBloco(bloco: VendaBloco) {
+    const rangeLabel = bloco.start === bloco.end ? `${bloco.start}` : `${bloco.start}-${bloco.end}`;
     const confirmado = window.confirm(
-      `Cancelar a venda do número ${numero}? Essa ação vai deixar o número disponível novamente.`
+      `Cancelar a venda do intervalo ${rangeLabel}? Essa ação vai deixar esses números disponíveis novamente.`
     );
     if (!confirmado) {
       return;
@@ -55,10 +104,10 @@ export default function VendasPage() {
 
     setMensagem(null);
     setErro(null);
-    setProcessandoCancelamento(numero);
+    setProcessandoCancelamento(rangeLabel);
 
     try {
-      const response = await fetch(`/api/compradores?numero=${numero}`, {
+      const response = await fetch(`/api/compradores?numeros=${rangeLabel}`, {
         method: "DELETE",
       });
 
@@ -68,7 +117,11 @@ export default function VendasPage() {
         throw new Error(data?.message || "Erro ao cancelar a venda.");
       }
 
-      setMensagem(`Venda do número ${numero} cancelada com sucesso.`);
+      setMensagem(
+        bloco.start === bloco.end
+          ? `Venda do número ${bloco.start} cancelada com sucesso.`
+          : `Venda do intervalo ${rangeLabel} cancelada com sucesso.`
+      );
       await carregarVendas();
     } catch (error) {
       setErro(error instanceof Error ? error.message : "Erro inesperado.");
@@ -104,7 +157,7 @@ export default function VendasPage() {
             <table className="vendas-table">
               <thead>
                 <tr>
-                  <th>Número</th>
+                  <th>Venda</th>
                   <th>Comprador</th>
                   <th>CPF</th>
                   <th>Telefone</th>
@@ -115,37 +168,41 @@ export default function VendasPage() {
                 </tr>
               </thead>
               <tbody>
-                {vendas.map((venda) => (
-                  <tr key={venda.id}>
-                    <td>{venda.numero}</td>
-                    <td>{venda.comprador ?? "-"}</td>
-                    <td>{venda.cpfComprador ?? "-"}</td>
-                    <td>{venda.telefoneComprador ?? "-"}</td>
-                    <td>{venda.cidadeComprador ?? "-"}</td>
-                    <td>{venda.vendedor?.nome ?? "-"}</td>
-                    <td>
-                      {venda.dataVenda
-                        ? new Date(venda.dataVenda).toLocaleString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "-"}
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        className="vendas-cancel-button"
-                        disabled={processandoCancelamento !== null}
-                        onClick={() => cancelarVenda(venda.numero)}
-                      >
-                        {processandoCancelamento === venda.numero ? "Cancelando..." : "Cancelar"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {agruparVendasEmBlocos(vendas).map((bloco) => {
+                  const rangeLabel = bloco.start === bloco.end ? `${bloco.start}` : `${bloco.start}-${bloco.end}`;
+
+                  return (
+                    <tr key={`${bloco.start}-${bloco.end}-${bloco.comprador}-${bloco.dataVenda}`}>
+                      <td>{rangeLabel}</td>
+                      <td>{bloco.comprador ?? "-"}</td>
+                      <td>{bloco.cpfComprador ? formatCPF(bloco.cpfComprador) : "-"}</td>
+                      <td>{bloco.telefoneComprador ? formatTelefone(bloco.telefoneComprador) : "-"}</td>
+                      <td>{bloco.cidadeComprador ?? "-"}</td>
+                      <td>{bloco.vendedorNome ?? "-"}</td>
+                      <td>
+                        {bloco.dataVenda
+                          ? new Date(bloco.dataVenda).toLocaleString("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "-"}
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className="vendas-cancel-button"
+                          disabled={processandoCancelamento !== null}
+                          onClick={() => cancelarVendaBloco(bloco)}
+                        >
+                          {processandoCancelamento === rangeLabel ? "Cancelando..." : "Cancelar"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

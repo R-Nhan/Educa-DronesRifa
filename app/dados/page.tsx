@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { formatCPF, formatTelefone } from "@/lib/format";
 
 import "./dados.css";
 
@@ -11,6 +12,8 @@ export default function Formulario() {
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [cpfComprador, setCpfComprador] = useState("");
+  const [telefoneComprador, setTelefoneComprador] = useState("");
 
   async function cadastrarComprador(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -23,8 +26,8 @@ export default function Formulario() {
 
     const dadosComprador = {
       comprador: String(formData.get("comprador")),
-      cpfComprador: String(formData.get("cpfComprador")),
-      telefoneComprador: String(formData.get("telefoneComprador")),
+      cpfComprador,
+      telefoneComprador,
       cidadeComprador: String(formData.get("cidadeComprador")),
       numerosRifa: String(formData.get("numerosRifa")),
       vendedorNome: String(formData.get("vendedorNome")),
@@ -53,6 +56,8 @@ export default function Formulario() {
           : `${totalNumeros} numeros cadastrados com sucesso.`
       );
       form.reset();
+      setCpfComprador("");
+      setTelefoneComprador("");
     } catch (error) {
       setErro(
         error instanceof Error
@@ -99,6 +104,8 @@ export default function Formulario() {
               type="text"
               id="cpfComprador"
               name="cpfComprador"
+              value={cpfComprador}
+              onChange={(event) => setCpfComprador(formatCPF(event.target.value))}
               placeholder="000.000.000-00"
               autoComplete="off"
               inputMode="numeric"
@@ -112,7 +119,9 @@ export default function Formulario() {
               type="tel"
               id="telefoneComprador"
               name="telefoneComprador"
-              placeholder="(00) 00000-0000"
+              value={telefoneComprador}
+              onChange={(event) => setTelefoneComprador(formatTelefone(event.target.value))}
+              placeholder="(00) 0 0000-0000"
               autoComplete="tel"
               required
             />

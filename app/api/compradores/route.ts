@@ -318,15 +318,30 @@ export async function DELETE(request: Request) {
   const numero = Number(searchParams.get("numero"));
   const numerosParam = searchParams.get("numeros");
 
-  const numeros = numerosParam
-    ? Array.from(
-        new Set(
-          numerosParam
-            .split(",")
-            .map((item) => Number(item.trim()))
-            .filter((value) => Number.isInteger(value) && value > 0)
-        )
+  const parseNumerosParam = (value: string) =>
+    Array.from(
+      new Set(
+        value
+          .split(",")
+          .flatMap((item) => {
+            const rangeMatch = item.trim().match(/^(\d+)\s*-\s*(\d+)$/);
+            if (rangeMatch) {
+              const start = Number(rangeMatch[1]);
+              const end = Number(rangeMatch[2]);
+              if (!Number.isInteger(start) || !Number.isInteger(end) || start <= 0 || end < start) {
+                return [];
+              }
+              return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+            }
+
+            const number = Number(item.trim());
+            return Number.isInteger(number) && number > 0 ? [number] : [];
+          })
       )
+    );
+
+  const numeros = numerosParam
+    ? parseNumerosParam(numerosParam)
     : Number.isInteger(numero) && numero > 0
     ? [numero]
     : [];
