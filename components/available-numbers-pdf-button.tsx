@@ -9,10 +9,8 @@ type RifaNumero = {
 
 export function AvailableNumbersPdfButton() {
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
 
   async function handleGeneratePdf() {
-    setMessage(null);
     setLoading(true);
 
     try {
@@ -26,7 +24,6 @@ export function AvailableNumbersPdfButton() {
       const numeros = data.map((item) => item.numero).sort((a, b) => a - b);
 
       if (numeros.length === 0) {
-        setMessage("Não há números disponíveis no momento.");
         return;
       }
 
@@ -100,36 +97,31 @@ export function AvailableNumbersPdfButton() {
       }
 
       pdf.save("numeros_disponiveis.pdf");
-      setMessage(`PDF gerado com ${numeros.length} números disponíveis.`);
     } catch (error) {
-      const text = error instanceof Error ? error.message : String(error);
-      setMessage(`Erro: ${text}`);
+      console.error("Erro ao gerar PDF:", error);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="pdf-export-button" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.5rem" }}>
-      <button
-        type="button"
-        onClick={handleGeneratePdf}
-        disabled={loading}
-        style={{
-          border: "1px solid #d1d5db",
-          background: loading ? "#f3f4f6" : "#111827",
-          color: loading ? "#6b7280" : "#ffffff",
-          cursor: loading ? "default" : "pointer",
-          padding: "0.7rem 1.1rem",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-          borderRadius: "999px",
-          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-        }}
-      >
-        {loading ? "Gerando..." : "Gerar PDF"}
-      </button>
-      {message ? <p style={{ margin: 0, fontSize: "0.9rem", color: "#4b5563" }}>{message}</p> : null}
-    </div>
+    <button
+      type="button"
+      onClick={handleGeneratePdf}
+      disabled={loading}
+      style={{
+        border: "1px solid #d1d5db",
+        background: loading ? "#f3f4f6" : "#111827",
+        color: loading ? "#6b7280" : "#ffffff",
+        cursor: loading ? "default" : "pointer",
+        padding: "0.7rem 1.1rem",
+        fontSize: "0.95rem",
+        fontWeight: 600,
+        borderRadius: "999px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+      }}
+    >
+      {loading ? "Gerando..." : "Gerar PDF"}
+    </button>
   );
 }

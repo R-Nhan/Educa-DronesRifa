@@ -1,7 +1,6 @@
 import { connection } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { AvailableNumbersPdfButton } from "@/components/available-numbers-pdf-button";
 
 import "./home.css";
 
@@ -97,7 +96,6 @@ export default async function Home() {
             </div>
           ))}
         </div>
-        <AvailableNumbersPdfButton />
       </section>
     </main>
   );
