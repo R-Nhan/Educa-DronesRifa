@@ -8,9 +8,6 @@ export function Header() {
         <Link className="header-link-venda" href="/dados">
           Venda
         </Link>
-        <Link className="header-link-venda" href="/vendas">
-          Vendas
-        </Link>
       </div>
 
       <div className="brand">

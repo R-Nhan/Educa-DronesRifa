@@ -24,6 +24,14 @@
   margin-bottom: 30px;
 }
 
+.dados-form-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
 .dados-form-kicker {
   display: block;
   color: #143A6B;
@@ -32,6 +40,30 @@
   letter-spacing: 0;
   text-transform: uppercase;
   margin-bottom: 10px;
+}
+
+.dados-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #143A6B;
+  color: #f3e7c5;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dados-link-button:hover {
+  background: #0f2f58;
+}
+
+.dados-link-button:focus-visible {
+  outline: 4px solid rgba(20, 58, 107, 0.22);
+  outline-offset: 3px;
 }
 
 .dados-form-header h2 {

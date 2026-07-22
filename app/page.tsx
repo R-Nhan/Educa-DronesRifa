@@ -97,11 +97,12 @@ export default async function Home() {
             </div>
           ))}
         </div>
+        <section className="export-card" aria-labelledby="titulo-export">
+          <AvailableNumbersPdfButton />
+        </section>
       </section>
 
       <section className="export-card" aria-labelledby="titulo-export">
-        <h2 id="titulo-export">Exportar números disponíveis</h2>
-        <p>Gere um PDF com todos os números que ainda não foram vendidos.</p>
         <AvailableNumbersPdfButton />
       </section>
     </main>

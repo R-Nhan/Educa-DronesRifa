@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 import "./dados.css";
@@ -67,8 +68,15 @@ export default function Formulario() {
     <main className="dados-page">
       <section className="dados-form-container" aria-labelledby="titulo-cadastro">
         <div className="dados-form-header">
-          <span className="dados-form-kicker">Cadastro de comprador</span>
-          <h2 id="titulo-cadastro">Dados do comprador da rifa</h2>
+          <div className="dados-form-header-top">
+            <div>
+              <span className="dados-form-kicker">Cadastro de comprador</span>
+              <h2 id="titulo-cadastro">Dados do comprador da rifa</h2>
+            </div>
+            <Link className="dados-link-button" href="/vendas">
+              Ver registros de venda
+            </Link>
+          </div>
           <p>Preencha as informacoes para registrar a venda dos numeros escolhidos.</p>
         </div>
 
