@@ -185,21 +185,55 @@
   color: #8f2f1f;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
   .dados-page {
     padding: 28px 14px;
   }
 
   .dados-form-container {
-    padding: 26px 18px;
+    padding: 24px 16px;
+  }
+
+  .dados-form-header-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dados-link-button {
+    width: 100%;
   }
 
   .dados-form-header h2 {
-    font-size: 1.55rem;
+    font-size: 1.6rem;
   }
 
   .dados-form {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 16px;
+  }
+
+  .dados-field input,
+  .dados-field select {
+    min-height: 48px;
+    padding: 0 12px;
+  }
+
+  .dados-submit {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dados-form-container {
+    padding: 20px 12px;
+  }
+
+  .dados-form-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .dados-form-header p {
+    font-size: 0.95rem;
   }
 }

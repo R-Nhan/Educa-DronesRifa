@@ -74,6 +74,7 @@
 
 .vendas-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .vendas-table {
@@ -142,9 +143,39 @@
     font-size: 1.6rem;
   }
 
+  .vendas-header p {
+    font-size: 0.95rem;
+  }
+
+  .vendas-loading,
+  .vendas-empty {
+    padding: 24px 16px;
+  }
+
   .vendas-table th,
   .vendas-table td {
     font-size: 0.85rem;
     padding: 10px 8px;
+  }
+
+  .vendas-cancel-button {
+    width: 100%;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vendas-page {
+    padding: 24px 10px;
+  }
+
+  .vendas-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .vendas-table th,
+  .vendas-table td {
+    font-size: 0.8rem;
+    padding: 8px 6px;
   }
 }
